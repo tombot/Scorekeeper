@@ -35,7 +35,7 @@
         socket.emit('edit_update', { color: color, event_type : "score", high: high, low: !high });
       }
       function dead_ball(color) {
-        socket.emit('edit_update', { color: "blue", event_type : "dead_ball" });
+        socket.emit('edit_update', { color: color, event_type : "dead_ball" });
       }
       function new_match() {
          socket.emit('new_match',{});
