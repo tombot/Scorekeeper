@@ -14,6 +14,12 @@
     border: .5em solid #333;
     margin: 1.0em;
 }
+.assist_circle.small {
+    width: 4em;
+    height: 4em;
+    border: .2em solid #333;
+}
+
 
 .assist_circle.scored {
 	background: green;
@@ -37,7 +43,6 @@
 
 .checkbox {
 	margin : 10px;
-	zoom: 150%;
 }
 
 .score {
@@ -50,5 +55,9 @@
 
 button.scoring {
 	padding:.5em;
-	margin:1em;
+	margin:.3em;
+}
+
+td.auton_scoring {
+	/* width: 300px; */
 }

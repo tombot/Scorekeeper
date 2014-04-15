@@ -1,9 +1,11 @@
 <html>
   <head>
     <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap-switch.css" rel="stylesheet">
     <link href="css/scorekeeper.css" rel="stylesheet" type="text/css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap-switch.js"></script>
     <script src="/js/underscore-min.js"></script>
     <script>
       var socket = io.connect('http://localhost');
@@ -18,7 +20,9 @@
         $(".assists .assist_2").toggleClass("scored", num_assists >= 2);
         $(".assists .assist_3").toggleClass("scored", num_assists >= 3);
         $("#truss").attr("checked", new_score.current_cycle.truss);
+        $("input#truss").bootstrapSwitch('state', new_score.current_cycle.truss);
         $("#catch").attr("checked", new_score.current_cycle.caught);
+        $("input#catch").bootstrapSwitch('state', new_score.current_cycle.caught);
         $("#current_score").text(new_score.score);
       });
 
@@ -70,26 +74,67 @@
             new_match();
           }
         });
+        $("input#truss").bootstrapSwitch({'onText': 'Yes', 'offText': 'No', 'labelText': 'Truss'});
+        $("input#catch").bootstrapSwitch({'onText': 'Yes', 'offText': 'No', 'labelText': 'Catch'});
+        $("input.hot_goal").bootstrapSwitch({'onText': 'Yes', 'offText': 'No', 'labelText': 'Hot'});
+        $("input.auto_bonus").bootstrapSwitch({'onText': 'Yes', 'offText': 'No', 'labelText': 'Bonus'});
     });
     </script>
   </head>
   <body>
     <h2><span id="scorekeep_color">Blue</span> Alliance Scorekeeper</h2>
-  Score for <select id="alliance">
+    Score for <select id="alliance">
     <option value="blue">Blue Alliance</option>
     <option value="red">Red Alliance</option>
-  </select>
-  <div class="vertical_space"></div>
-  <h3 >Current Score: <span id="current_score">0</span></h3>
-  <div></div>
-    <h3>Current Cycle (#<span id="cycle_num">0</span>)</h3>
+    </select>
+    <div class="vertical_space"></div>
+    <h3 >Current Score: <span id="current_score">0</span></h3>
+    
+    <table>
+      <tr>
+        <th class="auton_scoring"><h3>Autonomous</h3></th>
+        <th><h3>Current Cycle (#<span id="cycle_num">0</span>)</h3></th>
+      </tr>
+    <tr>
+    <td class="auton_scoring">
+      <div>
+        <div id="mode-group" class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary">
+            <input type="radio" name="mode" id="option1">High
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="mode" id="option2">Low
+          </label>
+        </div>
+        <input id="hot_goal_1" class="hot_goal" type="checkbox">
+        <input id="auto_bonus_1" class="auto_bonus" type="checkbox" checked>
+      </div>
+      <div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default">High</button>
+          <button type="button" class="btn btn-default">Low</button>
+        </div>
+        <input id="hot_goal_2" class="hot_goal" type="checkbox">
+        <input id="auto_bonus_2" class="auto_bonus" type="checkbox" checked>
+      </div>
+      <div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default">High</button>
+          <button type="button" class="btn btn-default">Low</button>
+        </div>
+        <input id="hot_goal_3" class="hot_goal" type="checkbox">
+        <input id="auto_bonus_3" class="auto_bonus" type="checkbox" checked>
+      </div>
+    </td>
+    <td>
+
     <div>
       <div class="assists">
         <table>
           <tr>
-            <td><div class="assist_1 assist_circle scored"></div></td>
-            <td><div class="assist_2 assist_circle scored"></div></td>
-            <td><div class="assist_3 assist_circle scored"></div></td>
+            <td><div class="assist_1 assist_circle scored small"></div></td>
+            <td><div class="assist_2 assist_circle scored small"></div></td>
+            <td><div class="assist_3 assist_circle scored small"></div></td>
           </tr>
           <tr>
             <td colspan="3">
@@ -103,22 +148,16 @@
     
     <div class="vertical_space"></div>
 
-
-    <div class="checkbox">
-      <label>
-        <input id="truss" type="checkbox"> Truss
-      </label>
-    </div>
-    <div class="checkbox">
-      <label>
-        <input id="catch" type="checkbox"> Catch
-      </label>
-    </div>
+    <input id="truss" type="checkbox">
+    <input id="catch" type="checkbox">
     <div class="vertical_space"></div>
-    <button id="commit_cycle_high" class="btn btn-lg btn-success scoring" href="#"><span class="glyphicon glyphicon-chevron-up"></span> Score HIGH Goal</button>
-    <button id="commit_cycle_low" class="btn btn-lg btn-success scoring" href="#"><span class="glyphicon glyphicon-chevron-down"></span> Score LOW Goal</button>
+    <button id="commit_cycle_high" class="btn btn-success scoring" href="#"><span class="glyphicon glyphicon-chevron-up"></span> Score HIGH Goal</button>
+    <button id="commit_cycle_low" class="btn btn-success scoring" href="#"><span class="glyphicon glyphicon-chevron-down"></span> Score LOW Goal</button>
     <div></div>
     <button id="dead_ball" class="btn btn-lg btn-warning scoring" href="#"><span class="glyphicon glyphicon-thumbs-down"></span> Dead ball</button>
+    </td>
+    </tr>
+    </table>
     <div class="vertical_space"></div>
     <div class="vertical_space"></div>
     <h3>Match controls</h3>
