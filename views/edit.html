@@ -1,0 +1,131 @@
+<html>
+  <head>
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="css/scorekeeper.css" rel="stylesheet" type="text/css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/underscore-min.js"></script>
+    <script>
+      var socket = io.connect('http://localhost');
+      var scoring_color = "blue";
+      socket.emit('get_score', {});
+      socket.on('score_update', function (data) {
+        var new_score = data[scoring_color];
+        var num_cycles = new_score.cycles.length + 1;
+        var num_assists = new_score.current_cycle.num_assists;
+        $("#cycle_num").text(num_cycles);
+        $(".assists .assist_1").toggleClass("scored", num_assists >= 1);
+        $(".assists .assist_2").toggleClass("scored", num_assists >= 2);
+        $(".assists .assist_3").toggleClass("scored", num_assists >= 3);
+        $("#truss").attr("checked", new_score.current_cycle.truss);
+        $("#catch").attr("checked", new_score.current_cycle.caught);
+        $("#current_score").text(new_score.score);
+      });
+
+      function increment_assist(color) {
+        socket.emit('edit_update', { color: color, event_type : "increment_assists" });
+      }
+      function truss(color, done) {
+        socket.emit('edit_update', { color: color, event_type : "truss", done: done });
+      }
+      function caught(color, done) {
+        socket.emit('edit_update', { color: color, event_type : "catch", done: done });
+      }
+      function score(color, high) {
+        socket.emit('edit_update', { color: color, event_type : "score", high: high, low: !high });
+      }
+      function dead_ball(color) {
+        socket.emit('edit_update', { color: "blue", event_type : "dead_ball" });
+      }
+      function new_match() {
+         socket.emit('new_match',{});
+      }
+      $(function(){
+        socket.emit('get_score', {});
+        $("#increment_assist").click(function() { increment_assist(scoring_color) });
+
+        $("#alliance").on("change", function(data) { 
+          var color = data.target.value;
+          $("#scorekeep_color").text(color == "red" ? "Red" : "Blue");
+          scoring_color = color;
+          socket.emit('get_score', {});
+        });
+
+        $("#truss").on("change", function() { 
+          checked = $(this).is(":checked");
+          truss(scoring_color, checked);
+        });
+
+       $("#catch").on("change", function() { 
+          checked = $(this).is(":checked");
+          caught(scoring_color, checked);
+        });
+
+        $("#commit_cycle_high").click(function() { score(scoring_color, true) });
+        $("#commit_cycle_low").click(function() { score(scoring_color, false) });
+        $("#dead_ball").click(function() { dead_ball(scoring_color) });
+        $("#new_match").click(function() { 
+          var r = confirm("Start a new match?");
+          if (r) {
+            new_match();
+          }
+        });
+    });
+    </script>
+  </head>
+  <body>
+    <h2><span id="scorekeep_color">Blue</span> Alliance Scorekeeper</h2>
+  Score for <select id="alliance">
+    <option value="blue">Blue Alliance</option>
+    <option value="red">Red Alliance</option>
+  </select>
+  <div class="vertical_space"></div>
+  <h3 >Current Score: <span id="current_score">0</span></h3>
+  <div></div>
+    <h3>Current Cycle (#<span id="cycle_num">0</span>)</h3>
+    <div>
+      <div class="assists">
+        <table>
+          <tr>
+            <td><div class="assist_1 assist_circle scored"></div></td>
+            <td><div class="assist_2 assist_circle scored"></div></td>
+            <td><div class="assist_3 assist_circle scored"></div></td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <center><button id="increment_assist" class="btn btn-lg btn-primary scoring"  href="#"><span class="glyphicon glyphicon-plus-sign"></span> Add Assist</button></center>
+            </td>
+          </tr>
+        </table>
+      </div>
+      
+    </div>
+    
+    <div class="vertical_space"></div>
+
+
+    <div class="checkbox">
+      <label>
+        <input id="truss" type="checkbox"> Truss
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input id="catch" type="checkbox"> Catch
+      </label>
+    </div>
+    <div class="vertical_space"></div>
+    <button id="commit_cycle_high" class="btn btn-lg btn-success scoring" href="#"><span class="glyphicon glyphicon-chevron-up"></span> Score HIGH Goal</button>
+    <button id="commit_cycle_low" class="btn btn-lg btn-success scoring" href="#"><span class="glyphicon glyphicon-chevron-down"></span> Score LOW Goal</button>
+    <div></div>
+    <button id="dead_ball" class="btn btn-lg btn-warning scoring" href="#"><span class="glyphicon glyphicon-thumbs-down"></span> Dead ball</button>
+    <div class="vertical_space"></div>
+    <div class="vertical_space"></div>
+    <h3>Match controls</h3>
+    <div style="margin:10px">
+      <button type="button" id="new_match" class="btn btn btn-danger btn-lg">
+        <span class="glyphicon glyphicon-refresh"></span> New match
+      </button>
+    </div>
+  </body>
+</html>

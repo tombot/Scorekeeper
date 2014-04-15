@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="css/scorekeeper.css" rel="stylesheet" type="text/css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/underscore-min.js"></script>
+    <script>
+      var socket = io.connect('http://localhost');
+      socket.emit('get_score', {});
+      socket.on('score_update', function (data) {
+        window.score = data;
+        var colors = ["blue" , "red"];
+        _.each(colors, function(color) {
+          var score = data[color];
+          var selector = "#" + color + "_score";
+          $(selector + " .score").text(score.score);
+          var num_assists = score.current_cycle.num_assists;
+          $(selector + " .assists .assist_1").toggleClass("scored", num_assists >= 1);
+          $(selector + " .assists .assist_2").toggleClass("scored", num_assists >= 2);
+          $(selector + " .assists .assist_3").toggleClass("scored", num_assists >= 3);
+          $(selector + " .truss").text(score.current_cycle.truss ? "YES" : "NO");
+          $(selector + " .catch").text(score.current_cycle.caught ? "YES" : "NO");
+        });
+      });
+
+    </script>
+  </head>
+  <body>
+    <div id="red_score" class="score_box">
+      <center>
+      <div class="score">0</div>
+      <div class="hidden">TRUSS:<span class="truss">NO</span></div>
+      <div class="hidden">CATCH:<span class="catch">NO</span></div>
+      <div><span class="assists">
+        <table>
+          <tr>
+            <td><div class="assist_1 assist_circle"></div></td>
+            <td><div class="assist_2 assist_circle"></div></td>
+            <td><div class="assist_3 assist_circle"></div></td>
+          </tr>
+        </table>
+      </span></div>
+    </center>
+    </div> 
+    <div id="blue_score" class="score_box">
+      <center>
+      <div class="score">0</div>
+      <div class="hidden">TRUSS:<span class="truss">NO</span></div>
+      <div class="hidden">CATCH:<span class="catch">NO</span></div>
+      <div><span class="assists">
+        <table>
+          <tr>
+            <td><div class="assist_1 assist_circle"></div></td>
+            <td><div class="assist_2 assist_circle"></div></td>
+            <td><div class="assist_3 assist_circle"></div></td>
+          </tr>
+        </table>
+      </span></div>
+    </center>
+    </div>
+  </body>
+</html>

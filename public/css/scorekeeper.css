@@ -1,0 +1,54 @@
+.table_option { padding : 5px };
+
+.circle_base {
+
+}
+
+.assist_circle {
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+    width: 8em;
+    height: 8em;
+    border: .5em solid #333;
+    margin: 1.0em;
+}
+
+.assist_circle.scored {
+	background: green;
+}
+
+.score_box {
+	width: 50%;
+	height: 100%;
+}
+
+#blue_score {
+	float:right;
+	background-color: #7CA9D9;
+}
+
+
+#red_score {
+	float:left;
+	background-color: #F56E6E;
+}
+
+.checkbox {
+	margin : 10px;
+	zoom: 150%;
+}
+
+.score {
+	font-size:20em;
+}
+
+.vertical_space {
+	padding: .2em;
+}
+
+button.scoring {
+	padding:.5em;
+	margin:1em;
+}
